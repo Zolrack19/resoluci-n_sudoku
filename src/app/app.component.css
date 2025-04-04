@@ -1,0 +1,22 @@
+.fila {
+  border: 1px solid black;
+  min-height: 50px;
+  height: 6vh;
+  width: auto;
+  max-height: 100px;
+}
+
+.celda {
+  text-align: center;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: x-large;
+  font-weight: bolder;
+  border: 1px solid black;
+  min-width: 50px;
+  width: 2.5vw;
+  max-width: 100px;
+}
+
+.celda:focus {
+  background-color: rgb(97, 192, 255);
+}

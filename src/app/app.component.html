@@ -1,0 +1,23 @@
+<main class="main">
+  <h3 class="my-4 text-center">Resulve el sudoku que quieras</h3>
+  <p class="text-center">ingrese su sudoku aquí </p>
+
+  <div class="mt-1 mb-3 container d-flex justify-content-center align-content-center">
+    <table>
+      <tbody>
+        <tr class="fila" *ngFor="let item of nose; let i = index" [attr.data-row]="i">
+          <td tabindex="0" (keydown)="ingresar($event)" class="celda" *ngFor="let item of nose; let i = index" [attr.data-col]="i">
+            <div>
+              {{item}}
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="container text-center">
+    <button class="btn btn-warning btn-outline-primary  ">resolver!!</button>
+  </div>
+</main>
+
+<router-outlet />
