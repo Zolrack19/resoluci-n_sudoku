@@ -5,10 +5,10 @@
   <div class="mt-1 mb-3 container d-flex justify-content-center align-content-center">
     <table>
       <tbody>
-        <tr class="fila" *ngFor="let item of nose; let i = index" [attr.data-row]="i">
-          <td tabindex="0" (keydown)="ingresar($event)" class="celda" *ngFor="let item of nose; let i = index" [attr.data-col]="i">
+        <tr class="fila" *ngFor="let item of tablero; let i = index">
+          <td tabindex="0" (focus)="focus($event)" (keydown)="ingresar($event)" class="celda" *ngFor="let item of tablero; let j = index" [attr.data-row]="i" [attr.data-col]="j">
             <div>
-              {{item}}
+              
             </div>
           </td>
         </tr>
@@ -16,7 +16,7 @@
     </table>
   </div>
   <div class="container text-center">
-    <button class="btn btn-warning btn-outline-primary  ">resolver!!</button>
+    <button class="btn btn-warning btn-outline-primary  " (click)="resolver($event)">resolver!!</button>
   </div>
 </main>
 

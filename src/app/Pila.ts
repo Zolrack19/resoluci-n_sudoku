@@ -3,7 +3,7 @@ export class Pila {
   cola?: Nodo | null
   size = 0
 
-  push(dato: data) {
+  push(dato: celda) {
     const nuevoNodo = new Nodo(dato)
     if (this.size == 0) {
       this.head = nuevoNodo 
@@ -11,21 +11,22 @@ export class Pila {
       this.size += 1
       return
     }
-
-    if (this.head?.dato?.col == dato.col && this.head.dato.row == dato.row) {
-      nuevoNodo.dato!.mismaPosiciion = true;
+    if (this.size == 20) {
+      this.cola = this.cola?.siguiente
+      this.size -= 1;
     }
+
     this.head!.siguiente = nuevoNodo
     this.head = nuevoNodo
     this.size += 1
   }
 
-  peak(): data | undefined {
+  peak(): celda | undefined {
     if (this.size == 0) return
     return this.head?.dato
   }
 
-  pop(): data | undefined {
+  pop(): celda | undefined {
     if (this.size == 0) return
     if (this.size == 1) {
       const dato = this.cola?.dato
@@ -58,18 +59,17 @@ export class Pila {
 
 }
 
-export type data = {
-  mismaPosiciion: boolean
+export type celda = {
   row: number,
   col: number,
-  num: number,
-  elm: HTMLElement
+  num?: number,
+  elm: HTMLElement | null
 }
 
 class Nodo {
-  dato?: data
+  dato?: celda
   siguiente: Nodo | null = null
-  constructor(dato: data) {
+  constructor(dato: celda) {
     this.dato = dato;
   }
 }
