@@ -24,13 +24,12 @@ export class AppComponent {
   constructor(private http: HttpClient) {
   }
 
-
-
   detectarTeclas = (event: KeyboardEvent) => {
     if (event.ctrlKey && event.key === 'z') {
       let dato = this.pila.pop()
       if (!dato) return
       dato.elm!.innerHTML = ""
+      dato.elm?.focus()
       this.tablero[dato.row][dato.col] = 0
       
       dato = this.pila.peak()
@@ -97,7 +96,6 @@ export class AppComponent {
       })
     }
   }
-
 
   ngOnInit(): void {
     document.addEventListener('keydown', this.detectarTeclas);
