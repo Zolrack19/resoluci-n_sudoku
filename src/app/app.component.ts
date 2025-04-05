@@ -14,50 +14,43 @@ import { HttpClient } from '@angular/common/http';
 })
 export class AppComponent {
 
-  celda?: celda = {
-    row: 0,
-    col: 0,
-    elm: null
-  }
+  posicion: number[] = [0, 0]
   pila: Pila = new Pila()  
   tablero: number[][] = []
   constructor(private http: HttpClient) {
   }
 
   detectarTeclas = (event: KeyboardEvent) => {
-    if (event.ctrlKey && event.key === 'z') {
+    if (event.ctrlKey && event.key === 'z') {  
       let dato = this.pila.pop()
       if (!dato) return
-      dato.elm!.innerHTML = ""
-      dato.elm?.focus()
       this.tablero[dato.row][dato.col] = 0
-      
+      dato.elm?.focus()
+  
       dato = this.pila.peak()
       if (!dato) return
-      dato.elm!.innerHTML = "" + dato.num
       this.tablero[dato.row][dato.col] = dato.num || 0
     }
 
-    if (this.celda == null) return
     switch (event.key) {
       case "ArrowUp":
-        if (this.celda.row - 1 >= 0) {
-          (document.querySelector(`[data-row="${this.celda.row - 1}"][data-col="${this.celda.col}"]`) as HTMLElement)?.focus()
+        if (this.posicion[0] - 1 >= 0) {
+          (document.querySelector(`[data-row="${this.posicion[0] - 1}"][data-col="${this.posicion[1]}"]`) as HTMLElement)?.focus()
         }
         break;
       case "ArrowDown":
-        if (this.celda.row + 1 < 9) {
-          (document.querySelector(`[data-row="${this.celda.row + 1}"][data-col="${this.celda.col}"]`) as HTMLElement)?.focus()
+        if (this.posicion[0] + 1 < 9) {
+          (document.querySelector(`[data-row="${this.posicion[0] + 1}"][data-col="${this.posicion[1]}"]`) as HTMLElement)?.focus()
         }
         break;
       case "ArrowRight":
-        if (this.celda.col + 1 < 9) {
-          (document.querySelector(`[data-row="${this.celda.row}"][data-col="${this.celda.col + 1}"]`) as HTMLElement)?.focus()
+        if (this.posicion[1] + 1 < 9) {
+          (document.querySelector(`[data-row="${this.posicion[0]}"][data-col="${this.posicion[1] + 1}"]`) as HTMLElement)?.focus()
         }
         break;
       case "ArrowLeft":
-        if (this.celda.col - 1 >= 0) {
-          (document.querySelector(`[data-row="${this.celda.row}"][data-col="${this.celda.col - 1}"]`) as HTMLElement)?.focus()
+        if (this.posicion[1] - 1 >= 0) {
+          (document.querySelector(`[data-row="${this.posicion[0]}"][data-col="${this.posicion[1] - 1}"]`) as HTMLElement)?.focus()
         }
         break;
       default:
@@ -67,34 +60,27 @@ export class AppComponent {
 
   public focus($event: Event) {
     const elem = $event.target as HTMLElement
-    const row = Number.parseInt(elem.dataset["row"]!)
-    const col = Number.parseInt(elem.dataset["col"]!)
-    
-    this.celda!.row = row
-    this.celda!.col = col
-    this.celda!.elm = elem
+    this.posicion[0] = Number.parseInt(elem.dataset["row"]!)
+    this.posicion[1] = Number.parseInt(elem.dataset["col"]!)
   }
 
   public ingresar($event: KeyboardEvent) {
-    const el = ($event.target as HTMLElement)
-    if ($event.key == "Backspace" || $event.key == "Delete") {
-      el.innerHTML = ""
-      this.tablero[Number.parseInt(el.dataset["row"]!)][Number.parseInt(el.dataset["col"]!)] = 0
-    }
-
-    if ($event.key.match(/^[1-9]+$/)) {
-      el.innerHTML = $event.key
-      const row = Number.parseInt(el.dataset["row"]!)
-      const col = Number.parseInt(el.dataset["col"]!)
-      const num = Number.parseInt($event.key)
-      this.tablero[row][col] = num
+    const key = $event.key
+    if (/^[1-9]$/.test(key)) {
+      const num = parseInt(key)
+      this.tablero[this.posicion[0]][this.posicion[1]] = num;
       this.pila.push({
-        col: col,
-        row: row,
+        row: this.posicion[0],
+        col: this.posicion[1],
         num: num,
-        elm: el
+        elm: (document.querySelector(`[data-row="${this.posicion[0]}"][data-col="${this.posicion[1]}"]`) as HTMLElement)
       })
     }
+    
+    if (key == "Backspace" || key == "Delete") {
+      this.tablero[this.posicion[0]][this.posicion[1]] = 0;
+    }
+    
   }
 
   ngOnInit(): void {
@@ -107,14 +93,35 @@ export class AppComponent {
   ngOnDestroy(): void {
     document.removeEventListener('keydown', this.detectarTeclas);
   }
+  
+  trackByIndex(index: number, item: any): number {
+    return index;
+  }
+
 
   public resolver($event: Event) {
-    this.http.post('http://localhost:8080/saludar/servlet', {mensaje: "hola desde angular!!"})
+    this.http.post('http://localhost:8080/saludar/servlet', {
+      mensaje: "hola desde angular!!",
+      tablero: this.tablero
+    }
+    )
       .subscribe({
-        next: (res) => {console.log("resultado: ", res)},
+        next: (res) => {
+          console.log(res);
+          const respuesta = (res as respuesta)
+          for (let i = 0; i < 9; i++) {
+            for (let j = 0; j < 9; j++) {
+              this.tablero[i][j] = respuesta.tablero[i][j]
+            }
+          }
+        },
         error: (err) => {console.log("error", err);
         }
       }
     )
   }
+}
+type respuesta = {
+  tablero: number[][],
+  mensaje: string
 }
